@@ -42,3 +42,18 @@ print(mean(simulations))
 p <- 1 / factorial(array_size)
 your_answer <- (1 - p) / p
 print(your_answer)
+
+
+#-------
+#P solving in 1
+
+p_solve_1 <- length(which(simulations == 1)) / length(simulations)
+E_p_var <- p_solve_1 * (1 - p_solve_1) / length(simulations)
+
+CI <- p_solve_1 + c(-1, 1) * qnorm(0.975) * sqrt(E_p_var)
+print(CI)
+print(p_solve_1)
+
+
+your_answer <- 1 / factorial(array_size)
+print(your_answer)
