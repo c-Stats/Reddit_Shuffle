@@ -57,3 +57,67 @@ print(p_solve_1)
 
 your_answer <- 1 / factorial(array_size)
 print(your_answer)
+
+
+#-------
+#Analytical solution
+
+library(combinat)
+library(data.table)
+library(dplyr)
+
+n <- 5
+
+indices <- combinat::combn(c(1:n), 2)
+
+states <- combinat::permn(c(1:n))
+names(states) <- c(1:length(states))
+states <- lapply(states, function(x){as.data.table(t(x))})
+states <- bind_rows(states)
+
+transition_mat <- matrix(0, factorial(n), factorial(n))
+states_compressed = apply(states, 1, function(x){paste(x, collapse = "")})
+
+for(i in 1:nrow(transition_mat)){
+
+	for(j in 1:ncol(indices)){
+
+		next_state <- as.matrix(states[i, ])
+		next_state[indices[, j]] <- rev(next_state[indices[, j]])
+		next_state <- paste(next_state, collapse = "")
+
+		transition_mat[i, which(states_compressed == next_state)] <- 1 / ncol(indices)
+
+	}
+
+}
+
+transition_mat[1, ] <- 0
+transition_mat[1, 1] <- 1
+
+
+first_moment <- 0
+pb <- txtProgressBar(min = 0, max = factorial(n))
+
+for(i in 2:factorial(n)){
+
+	v <- t(rep(0, factorial(n)))
+	v[i] <- 1
+
+	p <- rep(0, 10000)
+
+	for(j in 1:10000){
+
+		v <- v %*% transition_mat
+		p[j] <- v[1]
+
+	}
+
+	first_moment <- first_moment + sum(1 - p)
+
+	setTxtProgressBar(pb, i)
+
+}
+
+first_moment <- first_moment / factorial(n)
+print(first_moment)
