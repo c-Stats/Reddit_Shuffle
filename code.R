@@ -118,6 +118,4 @@ while(TRUE){
 
 first_moment <- s
 
-
-first_moment <- first_moment
 print(first_moment)
