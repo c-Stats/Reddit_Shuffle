@@ -119,5 +119,5 @@ while(TRUE){
 first_moment <- s
 
 
-first_moment <- first_moment / factorial(n)
+first_moment <- first_moment
 print(first_moment)
