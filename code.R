@@ -67,6 +67,7 @@ library(data.table)
 library(dplyr)
 
 n <- 5
+n_states <- factorial(n)
 
 indices <- combinat::combn(c(1:n), 2)
 
@@ -75,7 +76,7 @@ names(states) <- c(1:length(states))
 states <- lapply(states, function(x){as.data.table(t(x))})
 states <- bind_rows(states)
 
-transition_mat <- matrix(0, factorial(n), factorial(n))
+transition_mat <- matrix(0, n_states, n_states)
 states_compressed = apply(states, 1, function(x){paste(x, collapse = "")})
 
 for(i in 1:nrow(transition_mat)){
@@ -96,16 +97,18 @@ transition_mat[1, ] <- 0
 transition_mat[1, 1] <- 1
 
 
-v <- t(rep(1, factorial(n)))
+#Use the fact that X is bounded on [0, inf)
+#I.e.: use the survival function to compute E[X]
+v <- t(rep(1, n_states))
 
-s <- (factorial(n) - v[1]) / factorial(n)
+s <- (n_states - v[1]) / n_states
 
 while(TRUE){
 
 	s_last <- s
 
 	v <- v %*% transition_mat
-	s <- s + (factorial(n) - v[1]) / factorial(n)
+	s <- s + (n_states - v[1]) / n_states
 
 	if(abs(s_last - s) <= 10^(-10)){
 
@@ -117,5 +120,4 @@ while(TRUE){
 }
 
 first_moment <- s
-
 print(first_moment)
