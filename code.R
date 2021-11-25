@@ -99,6 +99,8 @@ transition_mat[1, 1] <- 1
 first_moment <- 0
 pb <- txtProgressBar(min = 0, max = factorial(n))
 
+#Skip first state as it is the absorbing state
+#I.e.: already sorted, X = 0 with probability 1
 for(i in 2:factorial(n)){
 
 	v <- t(rep(0, factorial(n)))
@@ -113,6 +115,7 @@ for(i in 2:factorial(n)){
 
 	}
 
+	#Darth Vader rule 
 	first_moment <- first_moment + sum(1 - p)
 
 	setTxtProgressBar(pb, i)
